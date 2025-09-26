@@ -1,6 +1,6 @@
 # Network Traffic Analyzer (CLI)
 
-A network traffic and packet analyzer developed in Python with a CLI.
+A network traffic and packet analyzer developed in Python.
 
 ## Features
 
