@@ -20,9 +20,10 @@ class PacketAnalyzer:
             'ports': {}
         }
     
-    def analyze(self, packet):
+def analyze(self, packet):
+    try:
         result = {
-            'timestamp': packet.time,
+            'timestamp': getattr(packet, "time", None),
             'length': len(packet),
             'layers': [],
             'summary': packet.summary()
@@ -31,17 +32,15 @@ class PacketAnalyzer:
         self.stats['total'] += 1
         
         for layer in packet.layers():
-            layer_type = layer.__name__
-            
-            if layer_type not in self.stats['protocols']:
-                self.stats['protocols'][layer_type] = 0
-            self.stats['protocols'][layer_type] += 1
-            
             if layer in self.protocol_handlers:
                 layer_info = self.protocol_handlers[layer](packet.getlayer(layer))
                 result['layers'].append(layer_info)
+                
+            self.stats['protocols'][layer.__name__] += 1
         
         return result
+    except Exception as e:
+        return {'error': str(e), 'summary': packet.summary()}
     
     def _analyze_ip(self, ip_layer):
         result = {
